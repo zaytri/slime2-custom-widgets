@@ -1,0 +1,635 @@
+{
+	"message-category": {
+		"label": "Message",
+		"settings": {
+			"font-section": {
+				"label": "Text",
+				"type": "section",
+				"settings": {
+					"font-name": {
+						"type": "font-input",
+						"label": "Font"
+					},
+					"font-size": {
+						"type": "slider-input",
+						"defaultValue": 14,
+						"min": 1,
+						"max": 72,
+						"step": 1,
+						"label": "Font Size (px)"
+					},
+					"font-weight": {
+						"type": "select-input",
+						"defaultValue": 400,
+						"options": [
+							{
+								"label": "Thin",
+								"value": 100
+							},
+							{
+								"label": "Extra-Light",
+								"value": 200
+							},
+							{
+								"label": "Light",
+								"value": 300
+							},
+							{
+								"label": "Normal",
+								"value": 400
+							},
+							{
+								"label": "Medium",
+								"value": 500
+							},
+							{
+								"label": "Semi-Bold",
+								"value": 600
+							},
+							{
+								"label": "Bold",
+								"value": 700
+							},
+							{
+								"label": "Extra-Bold",
+								"value": 800
+							},
+							{
+								"label": "Heavy",
+								"value": 900
+							}
+						],
+						"label": "Font Weight",
+						"condition": {}
+					},
+					"max-lines": {
+						"type": "slider-input",
+						"defaultValue": 4,
+						"min": 1,
+						"max": 10,
+						"step": 1,
+						"label": "Max Lines"
+					},
+					"max-width": {
+						"type": "number-input",
+						"defaultValue": 500,
+						"min": 0,
+						"max": 10000,
+						"step": 1,
+						"label": "Max Message Width (px)"
+					},
+					"full-width": {
+						"type": "toggle-input",
+						"defaultValue": false,
+						"description": "Sets message width to always be at max width.",
+						"label": "Full Width Messages?"
+					}
+				}
+			},
+			"colors": {
+				"label": "Colors",
+				"type": "section",
+				"settings": {
+					"message-color": {
+						"type": "color-input",
+						"defaultValue": "#000",
+						"label": "Message Text Color"
+					},
+					"message-bg-color": {
+						"type": "color-input",
+						"defaultValue": "#fff",
+						"label": "Message Background Color"
+					},
+					"rainbow-types": {
+						"type": "multi-select-input",
+						"defaultValue": [
+							"highlighted",
+							"announcement",
+							"cheer",
+							"power-up"
+						],
+						"description": "The selected message types will have an animated rainbow background.",
+						"options": [
+							{
+								"label": "Highlighted",
+								"value": "highlighted"
+							},
+							{
+								"label": "Announcement",
+								"value": "announcement"
+							},
+							{
+								"label": "Cheer",
+								"value": "cheer"
+							},
+							{
+								"label": "Power-Up Effect",
+								"value": "power-up"
+							}
+						],
+						"label": "Animated Rainbow Background"
+					},
+					"use-custom-user": {
+						"type": "toggle-input",
+						"defaultValue": false,
+						"label": "Use Custom User Colors?"
+					},
+					"user-color": {
+						"type": "color-input",
+						"defaultValue": "#fff",
+						"label": "User Text Color",
+						"condition": {
+							"use-custom-user": true
+						}
+					},
+					"user-bg-color": {
+						"type": "color-input",
+						"defaultValue": "#000",
+						"label": "User Background Color",
+						"condition": {
+							"use-custom-user": true
+						}
+					}
+				}
+			},
+			"corner-section": {
+				"label": "Corner",
+				"type": "section",
+				"settings": {
+					"corner-type": {
+						"type": "select-input",
+						"defaultValue": "rounded",
+						"options": [
+							{
+								"label": "Rounded",
+								"value": "rounded"
+							},
+							{
+								"label": "Square",
+								"value": "square"
+							},
+							{
+								"label": "Diagonal",
+								"value": "diagonal"
+							}
+						],
+						"label": "Corner Type"
+					}
+				}
+			},
+			"badges-section": {
+				"label": "Badges",
+				"type": "section",
+				"settings": {
+					"hide-badges": {
+						"type": "toggle-input",
+						"defaultValue": false,
+						"label": "Hide Badges?"
+					}
+				}
+			},
+			"pronouns-section": {
+				"label": "Pronouns",
+				"type": "section",
+				"settings": {
+					"pronouns-text": {
+						"type": "text-display",
+						"label": "User pronouns are sourced from https://pr.alejo.io/ and https://pronoundb.org/"
+					},
+					"pronouns-display": {
+						"type": "select-input",
+						"defaultValue": "lowercase",
+						"options": [
+							{
+								"label": "Lowercase",
+								"value": "lowercase"
+							},
+							{
+								"label": "Capitalized",
+								"value": "capitalize"
+							},
+							{
+								"label": "Uppercase",
+								"value": "uppercase"
+							},
+							{
+								"label": "Hidden",
+								"value": "hidden"
+							}
+						],
+						"label": "Pronouns Display"
+					}
+				}
+			}
+		}
+	},
+	"position-category": {
+		"label": "Position",
+		"settings": {
+			"arrangement": {
+				"label": "Message Arrangement",
+				"type": "select-input",
+				"defaultValue": "vertical",
+				"options": [
+					{
+						"label": "Vertical",
+						"value": "vertical"
+					},
+					{
+						"label": "Horizontal",
+						"value": "horizontal"
+					},
+					{
+						"label": "Random",
+						"value": "random"
+					},
+					{
+						"label": "Random Edge",
+						"value": "random-edge"
+					}
+				]
+			},
+			"edges": {
+				"label": "Random Edges",
+				"condition": {
+					"arrangement": "random-edge"
+				},
+				"type": "multi-select-input",
+				"defaultValue": [
+					"bottom"
+				],
+				"options": [
+					{
+						"label": "Left",
+						"value": "left"
+					},
+					{
+						"label": "Right",
+						"value": "right"
+					},
+					{
+						"label": "Top",
+						"value": "top"
+					},
+					{
+						"label": "Bottom",
+						"value": "bottom"
+					}
+				]
+			},
+			"edge-offset": {
+				"label": "Max Offset from Edge (px)",
+				"condition": {
+					"arrangement": "random-edge"
+				},
+				"type": "slider-input",
+				"defaultValue": 100,
+				"min": 0,
+				"max": 1000,
+				"step": 1,
+				"description": "Max distance that the messages can be from the edge."
+			},
+			"vertical-flow": {
+				"label": "Vertical Flow",
+				"condition": {
+					"arrangement": "vertical"
+				},
+				"type": "select-input",
+				"defaultValue": "to-top",
+				"options": [
+					{
+						"label": "Bottom to Top",
+						"value": "to-top"
+					},
+					{
+						"label": "Top to Bottom",
+						"value": "to-bottom"
+					}
+				]
+			},
+			"vertical-align": {
+				"label": "Vertical Alignment",
+				"condition": {
+					"arrangement": "vertical"
+				},
+				"type": "select-input",
+				"defaultValue": "left",
+				"options": [
+					{
+						"label": "Left",
+						"value": "left"
+					},
+					{
+						"label": "Right",
+						"value": "right"
+					}
+				]
+			},
+			"horizontal-flow": {
+				"label": "Horizontal Flow",
+				"condition": {
+					"arrangement": "horizontal"
+				},
+				"type": "select-input",
+				"defaultValue": "to-left",
+				"options": [
+					{
+						"label": "Right to Left",
+						"value": "to-left"
+					},
+					{
+						"label": "Left to Right",
+						"value": "to-right"
+					}
+				]
+			},
+			"horizontal-align": {
+				"label": "Horizontal Alignment",
+				"condition": {
+					"arrangement": "horizontal"
+				},
+				"type": "select-input",
+				"defaultValue": "top",
+				"options": [
+					{
+						"label": "Top",
+						"value": "top"
+					},
+					{
+						"label": "Bottom",
+						"value": "bottom"
+					}
+				]
+			}
+		}
+	},
+	"animation-category": {
+		"label": "Animation",
+		"settings": {
+			"smooth-entrance": {
+				"label": "Use Smooth Scroll",
+				"type": "toggle-input",
+				"defaultValue": true,
+				"description": "Message size is animated with the entrance animation."
+			},
+			"entrance-animation": {
+				"label": "Entrance Animation",
+				"type": "dropdown-input",
+				"defaultValue": "fade-in",
+				"options": [
+					{
+						"label": "None",
+						"value": "none"
+					},
+					{
+						"label": "Expand In",
+						"value": "expand-in"
+					},
+					{
+						"label": "Fade In",
+						"value": "fade-in"
+					},
+					{
+						"label": "Fade In Left",
+						"value": "fade-in-left"
+					},
+					{
+						"label": "Fade In Right",
+						"value": "fade-in-right"
+					},
+					{
+						"label": "Fade In Up",
+						"value": "fade-in-up"
+					},
+					{
+						"label": "Fade In Down",
+						"value": "fade-in-down"
+					},
+					{
+						"label": "Slide In Left",
+						"value": "slide-in-left"
+					},
+					{
+						"label": "Slide In Right",
+						"value": "slide-in-right"
+					},
+					{
+						"label": "Slide In Up",
+						"value": "slide-in-up"
+					},
+					{
+						"label": "Slide In Down",
+						"value": "slide-in-down"
+					},
+					{
+						"label": "Zoom In",
+						"value": "zoom-in"
+					},
+					{
+						"label": "Zoom In Left",
+						"value": "zoom-in-left"
+					},
+					{
+						"label": "Zoom In Right",
+						"value": "zoom-in-right"
+					},
+					{
+						"label": "Zoom In Up",
+						"value": "zoom-in-up"
+					},
+					{
+						"label": "Zoom In Down",
+						"value": "zoom-in-down"
+					}
+				]
+			},
+			"exit-animation": {
+				"label": "Exit Animation",
+				"type": "dropdown-input",
+				"defaultValue": "fade-out",
+				"options": [
+					{
+						"label": "None",
+						"value": "none"
+					},
+					{
+						"label": "Fade Out",
+						"value": "fade-out"
+					},
+					{
+						"label": "Fade Out Left",
+						"value": "fade-out-left"
+					},
+					{
+						"label": "Fade Out Right",
+						"value": "fade-out-right"
+					},
+					{
+						"label": "Fade Out Up",
+						"value": "fade-out-up"
+					},
+					{
+						"label": "Fade Out Down",
+						"value": "fade-out-down"
+					},
+					{
+						"label": "Slide Out Left",
+						"value": "slide-out-left"
+					},
+					{
+						"label": "Slide Out Right",
+						"value": "slide-out-right"
+					},
+					{
+						"label": "Slide Out Up",
+						"value": "slide-out-up"
+					},
+					{
+						"label": "Slide Out Down",
+						"value": "slide-out-down"
+					},
+					{
+						"label": "Zoom Out",
+						"value": "zoom-out"
+					},
+					{
+						"label": "Zoom Out Left",
+						"value": "zoom-out-left"
+					},
+					{
+						"label": "Zoom Out Right",
+						"value": "zoom-out-right"
+					},
+					{
+						"label": "Zoom Out Up",
+						"value": "zoom-out-up"
+					},
+					{
+						"label": "Zoom Out Down",
+						"value": "zoom-out-down"
+					}
+				]
+			}
+		}
+	},
+	"lifetime-category": {
+		"label": "Lifetime",
+		"settings": {
+			"delay": {
+				"label": "Message Delay (seconds)",
+				"type": "slider-input",
+				"defaultValue": 0,
+				"min": 0,
+				"max": 30,
+				"step": 1
+			},
+			"max-messages": {
+				"label": "Max Messages",
+				"type": "slider-input",
+				"defaultValue": 25,
+				"min": 1,
+				"max": 200,
+				"step": 1,
+				"description": "The oldest messages beyond the max will be automatically removed."
+			},
+			"hide-clipping": {
+				"label": "Hide messages that clip out of bounds?",
+				"type": "toggle-input",
+				"defaultValue": true
+			},
+			"expire-messages": {
+				"label": "Hide messages after some time?",
+				"type": "toggle-input",
+				"defaultValue": false
+			},
+			"hide-time": {
+				"label": "Hide Time (seconds)",
+				"condition": {
+					"expire-messages": true
+				},
+				"type": "number-input",
+				"defaultValue": 300,
+				"min": 1,
+				"step": 1
+			}
+		}
+	},
+	"filters-category": {
+		"label": "Filters",
+		"settings": {
+			"user-filters": {
+				"label": "User Filters",
+				"type": "section",
+				"settings": {
+					"hide-users": {
+						"type": "multi-text-input",
+						"defaultValue": [
+							"Sery_Bot"
+						],
+						"placeholder": "Name",
+						"label": "Hide Users"
+					},
+					"follower-only": {
+						"type": "toggle-input",
+						"defaultValue": false,
+						"label": "Follower Only Mode"
+					},
+					"follow-age": {
+						"type": "number-input",
+						"defaultValue": 0,
+						"min": 0,
+						"step": "any",
+						"description": "Will only show messages from followers that have followed for at least this many hours.",
+						"label": "Minimum follow age (hours)",
+						"condition": {
+							"follower-only": true
+						}
+					}
+				}
+			},
+			"message-filters": {
+				"label": "Message Filters",
+				"type": "section",
+				"settings": {
+					"hide-prefixes": {
+						"type": "multi-text-input",
+						"defaultValue": [
+							"!"
+						],
+						"placeholder": "Prefix",
+						"label": "Hide messages starting with"
+					},
+					"hide-words": {
+						"type": "multi-text-input",
+						"placeholder": "Bad Word",
+						"label": "Hide messages containing these words"
+					},
+					"hide-first-chat": {
+						"type": "toggle-input",
+						"defaultValue": false,
+						"label": "Hide First Time Chat Messages?"
+					}
+				}
+			}
+		}
+	},
+	"sound-category": {
+		"label": "Sound Effect",
+		"settings": {
+			"sound": {
+				"label": "Sound",
+				"type": "audio-input",
+				"description": "Play this sound effect for every chat message."
+			},
+			"sound-cooldown": {
+				"label": "Cooldown (seconds)",
+				"type": "slider-input",
+				"defaultValue": 5,
+				"min": 0,
+				"max": 600,
+				"step": 1,
+				"description": "Minimum time between playing sounds."
+			}
+		}
+	}
+}

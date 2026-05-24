@@ -1,0 +1,735 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+#widget {
+	/* define using custom variables loaded from JS with fallback values */
+	/* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/var */
+
+	--font-weight: var(--custom-font-weight, normal);
+	--font-size: var(--custom-font-size, 14px);
+	--direction: var(--custom-direction, column);
+	--justify: var(--custom-justify, end);
+	--align: var(--custom-align, flex-start);
+	--line-clamp: var(--custom-line-clamp, 4);
+	--max-width: min(var(--custom-max-width, 500px), 100%);
+	--badge-display: var(--custom-badge-display, inline);
+	--pronoun-display: var(--custom-pronoun-display, inline);
+	--pronoun-transform: var(--custom-pronoun-transform, lowercase);
+	--custom-user-color: var(--custom-user-color, white);
+	--custom-user-bg-color: var(--custom-user-bg-color, black);
+	--message-color: var(--custom-message-color, black);
+	--message-bg-color: var(--custom-message-bg-color, white);
+	--edge-offset: var(--custom-edge-offset, 100px);
+
+	font-family: var(--custom-font-name), Nunito, Helvetica, Arial, sans-serif;
+	font-weight: var(--font-weight);
+	font-size: var(--font-size);
+
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+
+	display: flex;
+
+	/* default is the same values as #widget.vertical.to-top.left */
+	flex-direction: column;
+	justify-content: end;
+	align-items: flex-start;
+
+	&.vertical {
+		&.to-top {
+			flex-direction: column;
+			justify-content: end;
+		}
+		&.to-bottom {
+			flex-direction: column-reverse;
+			justify-content: start;
+		}
+		&.left {
+			align-items: flex-start;
+		}
+		&.right {
+			align-items: flex-end;
+		}
+	}
+
+	&.horizontal {
+		flex-direction: row; /* default fallback */
+		&.to-left {
+			flex-direction: row;
+			justify-content: end;
+		}
+		&.to-right {
+			flex-direction: row-reverse;
+			justify-content: start;
+		}
+		&.top {
+			align-items: flex-start;
+		}
+		&.bottom {
+			align-items: flex-end;
+		}
+	}
+
+	flex-direction: var(--direction);
+	justify-content: var(--justify);
+	align-items: var(--align);
+	gap: 8px;
+}
+
+.message {
+	--border-color: var(--dynamic-bg-color);
+	--user-text-color: var(--dynamic-color);
+	--border-width: 4px;
+	--border-radius: 8px;
+
+	.use-custom-user & {
+		--border-color: var(--custom-user-bg-color);
+		--user-text-color: var(--custom-user-color);
+	}
+
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	max-width: var(--max-width);
+
+	.full-width & {
+		width: var(--max-width);
+	}
+
+	/* trick to use gpu rendering to prevent sub-pixel issues */
+	transform: translateZ(0) scale(1);
+	overflow: hidden;
+	will-change: transform;
+
+	.random &,
+	.random-edge & {
+		position: absolute;
+		top: 0;
+		left: 0;
+		opacity: 0;
+
+		&.enter {
+			--max-y: calc(100% - var(--message-height));
+			--max-x: calc(100% - var(--message-width));
+			--random-full-y: max(0px, calc(var(--max-y) * var(--random-y)));
+			--random-full-x: max(0px, calc(var(--max-x) * var(--random-x)));
+			--random-offset-y: min(
+				calc(var(--edge-offset) * var(--random-y)),
+				var(--max-y)
+			);
+			--random-offset-x: min(
+				calc(var(--edge-offset) * var(--random-x)),
+				var(--max-x)
+			);
+			opacity: 1;
+		}
+	}
+
+	.random &.enter {
+		top: var(--random-full-y);
+		left: var(--random-full-x);
+	}
+
+	.random-edge &.enter {
+		/* fallback to centering messages */
+		top: calc((100% + var(--message-height)) / 2);
+		left: calc((100% + var(--message-width)) / 2);
+
+		&.random-left {
+			left: var(--random-offset-x);
+			right: initial;
+			top: var(--random-full-y);
+			bottom: initial;
+		}
+
+		&.random-right {
+			left: initial;
+			right: var(--random-offset-x);
+			top: var(--random-full-y);
+			bottom: initial;
+		}
+
+		&.random-top {
+			left: var(--random-full-x);
+			right: initial;
+			top: var(--random-offset-y);
+			bottom: initial;
+		}
+
+		&.random-bottom {
+			left: var(--random-full-x);
+			right: initial;
+			top: initial;
+			bottom: var(--random-offset-y);
+		}
+	}
+
+	animation-name: none;
+	animation-duration: 400ms;
+	animation-fill-mode: forwards;
+	--smooth: smooth-none;
+
+	.smooth-entrance.horizontal &,
+	.smooth-entrance.random &,
+	.smooth-entrance.random-edge & {
+		--smooth: smooth-y, smooth-x;
+	}
+	.smooth-entrance.vertical & {
+		--smooth: smooth-y;
+	}
+
+	&.enter {
+		.animation-enter-none & {
+			animation-name: none;
+		}
+
+		/* expand in */
+
+		.animation-enter-expand-in & {
+			animation-name: overexpand-in;
+		}
+
+		/* fade in */
+
+		.animation-enter-fade-in & {
+			animation-name: var(--smooth), fade-in;
+		}
+
+		.animation-enter-fade-in-left & {
+			animation-name: var(--smooth), fade-in, move-from-left;
+		}
+
+		.animation-enter-fade-in-right & {
+			animation-name: var(--smooth), fade-in, move-from-right;
+		}
+
+		.animation-enter-fade-in-up & {
+			animation-name: var(--smooth), fade-in, move-from-bottom;
+		}
+
+		.animation-enter-fade-in-down & {
+			animation-name: var(--smooth), fade-in, move-from-top;
+		}
+
+		/* slide in */
+
+		.animation-enter-slide-in-left & {
+			animation-name: var(--smooth), move-from-left;
+		}
+
+		.animation-enter-slide-in-right & {
+			animation-name: var(--smooth), move-from-right;
+		}
+
+		.animation-enter-slide-in-up & {
+			animation-name: var(--smooth), move-from-bottom;
+		}
+
+		.animation-enter-slide-in-down & {
+			animation-name: var(--smooth), move-from-top;
+		}
+
+		/* zoom in */
+
+		.animation-enter-zoom-in & {
+			animation-name: var(--smooth), zoom-in;
+		}
+
+		.animation-enter-zoom-in-left & {
+			animation-name: var(--smooth), zoom-from-left;
+		}
+
+		.animation-enter-zoom-in-right & {
+			animation-name: var(--smooth), zoom-from-right;
+		}
+
+		.animation-enter-zoom-in-up & {
+			animation-name: var(--smooth), zoom-from-bottom;
+		}
+
+		.animation-enter-zoom-in-down & {
+			animation-name: var(--smooth), zoom-from-top;
+		}
+	}
+
+	&.exit {
+		.animation-exit-none & {
+			animation-name: none;
+			display: none;
+		}
+
+		/* fade out */
+
+		.animation-exit-fade-out & {
+			animation-name: fade-out;
+		}
+
+		.animation-exit-fade-out-left & {
+			animation-name: fade-out, move-to-left;
+		}
+
+		.animation-exit-fade-out-right & {
+			animation-name: fade-out, move-to-right;
+		}
+
+		.animation-exit-fade-out-up & {
+			animation-name: fade-out, move-to-top;
+		}
+
+		.animation-exit-fade-out-down & {
+			animation-name: fade-out, move-to-bottom;
+		}
+
+		/* slide out */
+
+		.animation-exit-slide-out-left & {
+			animation-name: move-to-left;
+		}
+
+		.animation-exit-slide-out-right & {
+			animation-name: move-to-right;
+		}
+
+		.animation-exit-slide-out-up & {
+			animation-name: move-to-top;
+		}
+
+		.animation-exit-slide-out-down & {
+			animation-name: move-to-bottom;
+		}
+
+		/* zoom out */
+
+		.animation-exit-zoom-out & {
+			animation-name: zoom-out;
+		}
+
+		.animation-exit-zoom-out-left & {
+			animation-name: zoom-to-left;
+		}
+
+		.animation-exit-zoom-out-right & {
+			animation-name: zoom-to-right;
+		}
+
+		.animation-exit-zoom-out-up & {
+			animation-name: zoom-to-top;
+		}
+
+		.animation-exit-zoom-out-down & {
+			animation-name: zoom-to-bottom;
+		}
+	}
+}
+
+.content-border {
+	overflow: hidden;
+	border: var(--border-width) solid var(--border-color);
+	border-top: 0;
+	position: relative;
+
+	.rounded & {
+		border-bottom-left-radius: var(--border-radius);
+		border-bottom-right-radius: var(--border-radius);
+	}
+
+	.diagonal & {
+		--diagonal-radius: var(--border-radius) / 2;
+		--diagonal-inner: calc(var(--diagonal-radius) + var(--border-width));
+		--diagonal-inner-mask: transparent var(--diagonal-inner), black 0 100%;
+		--diagonal-inner-mask-width: calc(100% - var(--diagonal-inner) * 2);
+		--diagonal-border:
+			var(--border-color) calc(var(--diagonal-inner) - 1px), transparent 0 100%;
+
+		--mask:
+			linear-gradient(45deg, var(--diagonal-inner-mask)) 0% 0% /
+				var(--diagonal-inner-mask-width) 100% no-repeat,
+			linear-gradient(-45deg, var(--diagonal-inner-mask)) 100% 0% /
+				var(--diagonal-inner-mask-width) 100% no-repeat;
+		-webkit-mask: var(--mask);
+		mask: var(--mask);
+
+		.diagonal &::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background:
+				linear-gradient(45deg, var(--diagonal-border)) 0% 0% /
+					var(--diagonal-inner-mask-width) 100% no-repeat,
+				linear-gradient(-45deg, var(--diagonal-border)) 100% 0% /
+					var(--diagonal-inner-mask-width) 100% no-repeat;
+		}
+	}
+}
+
+.content-box {
+	padding: 0.25em 0.5em;
+	color: var(--message-color);
+	background-color: var(--message-bg-color);
+
+	.diagonal & {
+		--diagonal-inner: calc(var(--border-width) * 2 - 1px);
+		--diagonal-inner-mask: transparent var(--diagonal-inner), black 0 100%;
+		--diagonal-inner-mask-width: calc(100% - var(--diagonal-inner) * 2);
+
+		--mask:
+			linear-gradient(45deg, var(--diagonal-inner-mask)) 0% 0% /
+				var(--diagonal-inner-mask-width) 100% no-repeat,
+			linear-gradient(-45deg, var(--diagonal-inner-mask)) 100% 0% /
+				var(--diagonal-inner-mask-width) 100% no-repeat;
+		-webkit-mask: var(--mask);
+		mask: var(--mask);
+	}
+
+	.rainbow-highlighted [data-type='highlighted'] &,
+	.rainbow-power-up [data-type='power-up'] &,
+	.rainbow-announcement [data-type='announcement'] &,
+	.rainbow-cheer [data-type='cheer'] & {
+		color: black;
+		font-weight: bolder;
+		background: linear-gradient(
+				-45deg,
+				#ffadad,
+				#ffd6a5,
+				#fdffb6,
+				#caffbf,
+				#9bf6ff,
+				#a0c4ff,
+				#bdb2ff,
+				#ffc6ff,
+				#ffadad,
+				#ffd6a5
+			)
+			100% 100% / 900% 900%;
+		animation: move-background 5s infinite linear;
+	}
+}
+
+.content {
+	/* for emote overflow */
+	padding: 0.25em 0;
+
+	/* all necessary for line clamp to work */
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: var(--line-clamp);
+	line-clamp: var(--line-clamp);
+}
+
+.user-box {
+	padding: var(--border-width) calc(var(--border-width) * 2);
+	color: var(--user-text-color);
+	background-color: var(--border-color);
+	display: flex;
+
+	.rounded & {
+		border-top-left-radius: var(--border-radius);
+		border-top-right-radius: var(--border-radius);
+	}
+
+	.diagonal & {
+		padding-right: 1.5em;
+
+		--mask: linear-gradient(-135deg, transparent 1em, black 0 100%);
+		-webkit-mask: var(--mask);
+		mask: var(--mask);
+	}
+}
+
+.user {
+	display: inline;
+	font-weight: bolder;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+
+	&::after {
+		content: '';
+		display: inline-block;
+		width: var(--expander-width);
+	}
+}
+
+.name {
+	display: inline;
+	position: relative;
+}
+
+.badges {
+	display: var(--badge-display);
+	&:empty {
+		display: none;
+	}
+}
+
+.badge {
+	--badge-size: calc(1em + 4px);
+	height: var(--badge-size);
+	width: var(--badge-size);
+	min-height: var(--badge-size);
+	min-width: var(--badge-size);
+	margin-right: 3px;
+	display: inline;
+	vertical-align: text-top;
+}
+
+.pronouns {
+	display: var(--pronoun-display);
+	text-transform: var(--pronoun-transform);
+	&:empty {
+		display: none;
+	}
+}
+
+.text,
+.emote,
+.cheer-amount {
+	display: inline;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.cheer-amount {
+	font-weight: bolder;
+	margin-left: 0.25em;
+	border-radius: 4px;
+	color: white;
+	padding: 2px 4px;
+	outline-offset: -1px;
+	background-color: var(--cheer-color);
+	text-shadow: 0 1px #0004;
+}
+
+.emote {
+	height: 2em;
+	max-height: 112px;
+	vertical-align: middle;
+	margin-top: -0.25em;
+	margin-bottom: -0.2em;
+}
+
+/***********************
+ * Animation Keyframes *
+ ***********************/
+
+/* fade in/out */
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fade-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+		display: none;
+	}
+}
+
+/* slide in */
+
+@keyframes move-from-left {
+	from {
+		transform: translateX(-100%);
+	}
+}
+
+@keyframes move-from-right {
+	from {
+		transform: translateX(100%);
+	}
+}
+
+@keyframes move-from-top {
+	from {
+		transform: translateY(-200%);
+	}
+}
+
+@keyframes move-from-bottom {
+	from {
+		transform: translateY(200%);
+	}
+}
+
+/* slide out */
+
+@keyframes move-to-left {
+	to {
+		transform: translateX(-100%);
+		display: none;
+	}
+}
+
+@keyframes move-to-right {
+	to {
+		transform: translateX(100%);
+		display: none;
+	}
+}
+
+@keyframes move-to-top {
+	to {
+		transform: translateY(-200%);
+		display: none;
+	}
+}
+
+@keyframes move-to-bottom {
+	to {
+		transform: translateY(200%);
+		display: none;
+	}
+}
+
+/* zoom in/out */
+
+@keyframes zoom-in {
+	from {
+		transform: translate(0) scale(0);
+	}
+}
+
+@keyframes zoom-out {
+	to {
+		transform: translate(0) scale(0);
+		display: none;
+	}
+}
+
+/* zoom slide in */
+
+@keyframes zoom-from-left {
+	from {
+		transform: translateX(-100%) scale(0);
+	}
+}
+
+@keyframes zoom-from-right {
+	from {
+		transform: translateX(100%) scale(0);
+	}
+}
+
+@keyframes zoom-from-top {
+	from {
+		transform: translateY(-200%) scale(0);
+	}
+}
+
+@keyframes zoom-from-bottom {
+	from {
+		transform: translateY(200%) scale(0);
+	}
+}
+
+/* zoom slide out */
+
+@keyframes zoom-to-left {
+	to {
+		transform: translateX(-100%) scale(0);
+		display: none;
+	}
+}
+
+@keyframes zoom-to-right {
+	to {
+		transform: translateX(100%) scale(0);
+		display: none;
+	}
+}
+
+@keyframes zoom-to-top {
+	to {
+		transform: translateY(-200%) scale(0);
+		display: none;
+	}
+}
+
+@keyframes zoom-to-bottom {
+	to {
+		transform: translateY(200%) scale(0);
+		display: none;
+	}
+}
+
+@property --expander-width {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 0px;
+}
+
+/* overexpand in */
+
+@keyframes overexpand-in {
+	from {
+		--line-clamp: 1;
+		--expander-width: 0px;
+		max-height: 0;
+		max-width: 0;
+	}
+	50% {
+		--expander-width: calc(var(--message-width));
+		max-width: min(calc(var(--message-width) * 2), var(--max-width));
+	}
+	to {
+		--expander-width: 0px;
+		max-height: var(--message-height);
+		max-width: min(var(--message-width), var(--max-width));
+	}
+}
+
+/* smooth max height/width */
+
+@keyframes smooth-y {
+	from {
+		--line-clamp: 1;
+		max-height: 0;
+	}
+
+	to {
+		max-height: var(--message-height);
+	}
+}
+
+@property --line-clamp {
+	syntax: '<integer>';
+	inherits: true;
+}
+
+@keyframes smooth-x {
+	from {
+		--line-clamp: 1;
+		max-width: 0;
+	}
+
+	to {
+		max-width: min(var(--message-width), var(--max-width));
+	}
+}
+
+/* gradient animation */
+
+@keyframes move-background {
+	from {
+		background-position: 100% 100%;
+	}
+	to {
+		background-position: 0 0;
+	}
+}
