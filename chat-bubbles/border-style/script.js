@@ -3,7 +3,7 @@
 const slime2 = window.slime2;
 
 // set to true to automatically console log event data
-const LOG_EVENT_DATA = true;
+const LOG_EVENT_DATA = false;
 
 const EPOCH_DATE = new Date(0);
 
