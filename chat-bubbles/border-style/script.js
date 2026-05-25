@@ -414,7 +414,7 @@ async function handleChatMessage(data, eventDate, isAnnouncement) {
 				if (timeSinceLastSound > cooldown) {
 					// play sound once it passes the cooldown check
 					const audio = new Audio(soundSrc);
-					audio.volume = (Widget.values.get('sound.volume') ?? 20) / 100;
+					audio.volume = Widget.values.get('sound.volume') ?? 0.2;
 					audio.play();
 					Widget.lastPlayedSound = now;
 				}

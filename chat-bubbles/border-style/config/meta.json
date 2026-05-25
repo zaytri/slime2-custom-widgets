@@ -1,12 +1,10 @@
 {
 	"name": "Chat Bubbles (Border Style)",
 	"creator": "Zaytri",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"website": "https://zaytri.com/",
 	"support": "https://zaytri.com/",
-	"type": [
-		"overlay"
-	],
+	"type": ["overlay"],
 	"accounts": [
 		{
 			"type": "read",
@@ -14,12 +12,7 @@
 		}
 	],
 	"import": {
-		"js": [
-			"script.js",
-			"https://colorjs.io/dist/color.global.min.js"
-		],
-		"css": [
-			"styles.css"
-		]
+		"js": ["script.js", "https://colorjs.io/dist/color.global.min.js"],
+		"css": ["styles.css"]
 	}
 }
