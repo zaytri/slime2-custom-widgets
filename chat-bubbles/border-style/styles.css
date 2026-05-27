@@ -6,9 +6,6 @@
 
 	--font-weight: var(--custom-font-weight, normal);
 	--font-size: var(--custom-font-size, 14px);
-	--direction: var(--custom-direction, column);
-	--justify: var(--custom-justify, end);
-	--align: var(--custom-align, flex-start);
 	--line-clamp: var(--custom-line-clamp, 4);
 	--max-width: min(var(--custom-max-width, 500px), 100%);
 	--badge-display: var(--custom-badge-display, inline);
@@ -36,6 +33,7 @@
 	overflow: hidden;
 
 	display: flex;
+	gap: 8px;
 
 	/* default is the same values as #widget.vertical.to-top.left */
 	flex-direction: column;
@@ -76,11 +74,6 @@
 			align-items: flex-end;
 		}
 	}
-
-	flex-direction: var(--direction);
-	justify-content: var(--justify);
-	align-items: var(--align);
-	gap: 8px;
 }
 
 .message {
@@ -103,7 +96,7 @@
 		width: var(--max-width);
 	}
 
-	/* trick to use gpu rendering to prevent sub-pixel issues */
+	/* trick to use gpu rendering to prevent sub-pixel issues for diagonal */
 	transform: translateZ(0) scale(1);
 	overflow: hidden;
 	will-change: transform;
@@ -696,6 +689,11 @@
 
 /* smooth max height/width */
 
+@property --line-clamp {
+	syntax: '<integer>';
+	inherits: true;
+}
+
 @keyframes smooth-y {
 	from {
 		--line-clamp: 1;
@@ -705,11 +703,6 @@
 	to {
 		max-height: var(--message-height);
 	}
-}
-
-@property --line-clamp {
-	syntax: '<integer>';
-	inherits: true;
 }
 
 @keyframes smooth-x {
