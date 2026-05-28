@@ -96,10 +96,13 @@
 		width: var(--max-width);
 	}
 
-	/* trick to use gpu rendering to prevent sub-pixel issues for diagonal */
 	transform: translateZ(0) scale(1);
 	overflow: hidden;
-	will-change: transform;
+
+	/* trick to use gpu rendering to prevent sub-pixel issues for diagonal */
+	.diagonal & {
+		will-change: transform;
+	}
 
 	.random &,
 	.random-edge & {
