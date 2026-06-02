@@ -649,8 +649,8 @@ function buildTextFragment(textFragment) {
 			const src = buildBttvEmoteImageUrl(id, animated);
 			parsedFragments.push({ type: 'emote', text: part, src });
 		} else if (thirdPartyEmote.type === 'ffz') {
-			const { urls } = thirdPartyEmote.data;
-			const src = buildFfzEmoteImageUrl(urls);
+			const { urls, animated: animatedUrls } = thirdPartyEmote.data;
+			const src = buildFfzEmoteImageUrl(urls, animatedUrls);
 			parsedFragments.push({ type: 'emote', text: part, src });
 		} else {
 			parsedFragments.push({ type: 'text', text: part });
@@ -696,8 +696,8 @@ function buildEmoteFragment(emoteFragment) {
 		const { id, animated } = thirdPartyEmote.data;
 		src = buildBttvEmoteImageUrl(id, animated);
 	} else if (thirdPartyEmote.type === 'ffz') {
-		const { urls } = thirdPartyEmote.data;
-		src = buildFfzEmoteImageUrl(urls);
+		const { urls, animated: animatedUrls } = thirdPartyEmote.data;
+		const src = buildFfzEmoteImageUrl(urls, animatedUrls);
 	}
 
 	return buildParsedEmoteFragment({ type: 'emote', text, src });
@@ -855,9 +855,16 @@ function buildBttvEmoteImageUrl(id, animated, options = {}) {
 }
 
 /** Builds FrankerFaceZ emote image URL given the possible URLs */
-function buildFfzEmoteImageUrl(urls) {
+function buildFfzEmoteImageUrl(urls, animatedUrls) {
 	// urls['1'] is guaranteed, the others are not
-	return urls['4'] || urls['2'] || urls['1'];
+	return (
+		animatedUrls?.['4'] ||
+		animatedUrls?.['2'] ||
+		animatedUrls?.['1'] ||
+		urls['4'] ||
+		urls['2'] ||
+		urls['1']
+	);
 }
 
 /**
