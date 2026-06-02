@@ -39,41 +39,36 @@
 	flex-direction: column;
 	justify-content: end;
 	align-items: flex-start;
+}
 
-	&.vertical {
-		&.to-top {
-			flex-direction: column;
-			justify-content: end;
-		}
-		&.to-bottom {
-			flex-direction: column-reverse;
-			justify-content: start;
-		}
-		&.left {
-			align-items: flex-start;
-		}
-		&.right {
-			align-items: flex-end;
-		}
-	}
+#widget.vertical.to-top {
+	flex-direction: column;
+	justify-content: end;
+}
+#widget.vertical.to-bottom {
+	flex-direction: column-reverse;
+	justify-content: start;
+}
+#widget.vertical.left {
+	align-items: flex-start;
+}
+#widget.vertical.right {
+	align-items: flex-end;
+}
 
-	&.horizontal {
-		flex-direction: row; /* default fallback */
-		&.to-left {
-			flex-direction: row;
-			justify-content: end;
-		}
-		&.to-right {
-			flex-direction: row-reverse;
-			justify-content: start;
-		}
-		&.top {
-			align-items: flex-start;
-		}
-		&.bottom {
-			align-items: flex-end;
-		}
-	}
+#widget.horizontal.to-left {
+	flex-direction: row;
+	justify-content: end;
+}
+#widget.horizontal.to-right {
+	flex-direction: row-reverse;
+	justify-content: start;
+}
+#widget.horizontal.top {
+	align-items: flex-start;
+}
+#widget.horizontal.bottom {
+	align-items: flex-end;
 }
 
 .message {
@@ -82,247 +77,244 @@
 	--border-width: 4px;
 	--border-radius: 8px;
 
-	.use-custom-user & {
-		--border-color: var(--custom-user-bg-color);
-		--user-text-color: var(--custom-user-color);
-	}
-
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
 	max-width: var(--max-width);
 
-	.full-width & {
-		width: var(--max-width);
-	}
-
 	transform: translateZ(0) scale(1);
 	overflow: hidden;
-
-	/* trick to use gpu rendering to prevent sub-pixel issues for diagonal */
-	.diagonal & {
-		will-change: transform;
-	}
-
-	.random &,
-	.random-edge & {
-		position: absolute;
-		top: 0;
-		left: 0;
-		opacity: 0;
-
-		&.enter {
-			--max-y: calc(100% - var(--message-height));
-			--max-x: calc(100% - var(--message-width));
-			--random-full-y: max(0px, calc(var(--max-y) * var(--random-y)));
-			--random-full-x: max(0px, calc(var(--max-x) * var(--random-x)));
-			--random-offset-y: min(
-				calc(var(--edge-offset) * var(--random-y)),
-				var(--max-y)
-			);
-			--random-offset-x: min(
-				calc(var(--edge-offset) * var(--random-x)),
-				var(--max-x)
-			);
-			opacity: 1;
-		}
-	}
-
-	.random &.enter {
-		top: var(--random-full-y);
-		left: var(--random-full-x);
-	}
-
-	.random-edge &.enter {
-		/* fallback to centering messages */
-		top: calc((100% + var(--message-height)) / 2);
-		left: calc((100% + var(--message-width)) / 2);
-
-		&.random-left {
-			left: var(--random-offset-x);
-			right: initial;
-			top: var(--random-full-y);
-			bottom: initial;
-		}
-
-		&.random-right {
-			left: initial;
-			right: var(--random-offset-x);
-			top: var(--random-full-y);
-			bottom: initial;
-		}
-
-		&.random-top {
-			left: var(--random-full-x);
-			right: initial;
-			top: var(--random-offset-y);
-			bottom: initial;
-		}
-
-		&.random-bottom {
-			left: var(--random-full-x);
-			right: initial;
-			top: initial;
-			bottom: var(--random-offset-y);
-		}
-	}
 
 	animation-name: none;
 	animation-duration: 400ms;
 	animation-fill-mode: forwards;
 	--smooth: smooth-none;
+}
 
-	.smooth-entrance.horizontal &,
-	.smooth-entrance.random &,
-	.smooth-entrance.random-edge & {
-		--smooth: smooth-y, smooth-x;
-	}
-	.smooth-entrance.vertical & {
-		--smooth: smooth-y;
-	}
+.use-custom-user .message {
+	--border-color: var(--custom-user-bg-color);
+	--user-text-color: var(--custom-user-color);
+}
 
-	&.enter {
-		.animation-enter-none & {
-			animation-name: none;
-		}
+.full-width .message {
+	width: var(--max-width);
+}
 
-		/* expand in */
+/* trick to use gpu rendering to prevent sub-pixel issues for diagonal */
+.diagonal .message {
+	will-change: transform;
+}
 
-		.animation-enter-expand-in & {
-			animation-name: overexpand-in;
-		}
+.random .message,
+.random-edge .message {
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+}
 
-		/* fade in */
+.random .message.enter,
+.random-edge .message.enter {
+	--max-y: calc(100% - var(--message-height));
+	--max-x: calc(100% - var(--message-width));
+	--random-full-y: max(0px, calc(var(--max-y) * var(--random-y)));
+	--random-full-x: max(0px, calc(var(--max-x) * var(--random-x)));
+	--random-offset-y: min(
+		calc(var(--edge-offset) * var(--random-y)),
+		var(--max-y)
+	);
+	--random-offset-x: min(
+		calc(var(--edge-offset) * var(--random-x)),
+		var(--max-x)
+	);
+	opacity: 1;
+}
 
-		.animation-enter-fade-in & {
-			animation-name: var(--smooth), fade-in;
-		}
+.random .message.enter {
+	top: var(--random-full-y);
+	left: var(--random-full-x);
+}
 
-		.animation-enter-fade-in-left & {
-			animation-name: var(--smooth), fade-in, move-from-left;
-		}
+.random-edge .message.enter {
+	/* fallback to centering messages */
+	top: calc((100% + var(--message-height)) / 2);
+	left: calc((100% + var(--message-width)) / 2);
+}
 
-		.animation-enter-fade-in-right & {
-			animation-name: var(--smooth), fade-in, move-from-right;
-		}
+.random-edge .message.enter.random-left {
+	left: var(--random-offset-x);
+	right: initial;
+	top: var(--random-full-y);
+	bottom: initial;
+}
 
-		.animation-enter-fade-in-up & {
-			animation-name: var(--smooth), fade-in, move-from-bottom;
-		}
+.random-edge .message.enter.random-right {
+	left: initial;
+	right: var(--random-offset-x);
+	top: var(--random-full-y);
+	bottom: initial;
+}
 
-		.animation-enter-fade-in-down & {
-			animation-name: var(--smooth), fade-in, move-from-top;
-		}
+.random-edge .message.enter.random-top {
+	left: var(--random-full-x);
+	right: initial;
+	top: var(--random-offset-y);
+	bottom: initial;
+}
 
-		/* slide in */
+.random-edge .message.enter.random-bottom {
+	left: var(--random-full-x);
+	right: initial;
+	top: initial;
+	bottom: var(--random-offset-y);
+}
 
-		.animation-enter-slide-in-left & {
-			animation-name: var(--smooth), move-from-left;
-		}
+.smooth-entrance.horizontal .message,
+.smooth-entrance.random .message,
+.smooth-entrance.random-edge .message {
+	--smooth: smooth-y, smooth-x;
+}
+.smooth-entrance.vertical .message {
+	--smooth: smooth-y;
+}
 
-		.animation-enter-slide-in-right & {
-			animation-name: var(--smooth), move-from-right;
-		}
+.animation-enter-none .message.enter {
+	animation-name: none;
+}
 
-		.animation-enter-slide-in-up & {
-			animation-name: var(--smooth), move-from-bottom;
-		}
+/* expand in */
 
-		.animation-enter-slide-in-down & {
-			animation-name: var(--smooth), move-from-top;
-		}
+.animation-enter-expand-in .message.enter {
+	animation-name: overexpand-in;
+}
 
-		/* zoom in */
+/* fade in */
 
-		.animation-enter-zoom-in & {
-			animation-name: var(--smooth), zoom-in;
-		}
+.animation-enter-fade-in .message.enter {
+	animation-name: var(--smooth), fade-in;
+}
 
-		.animation-enter-zoom-in-left & {
-			animation-name: var(--smooth), zoom-from-left;
-		}
+.animation-enter-fade-in-left .message.enter {
+	animation-name: var(--smooth), fade-in, move-from-left;
+}
 
-		.animation-enter-zoom-in-right & {
-			animation-name: var(--smooth), zoom-from-right;
-		}
+.animation-enter-fade-in-right .message.enter {
+	animation-name: var(--smooth), fade-in, move-from-right;
+}
 
-		.animation-enter-zoom-in-up & {
-			animation-name: var(--smooth), zoom-from-bottom;
-		}
+.animation-enter-fade-in-up .message.enter {
+	animation-name: var(--smooth), fade-in, move-from-bottom;
+}
 
-		.animation-enter-zoom-in-down & {
-			animation-name: var(--smooth), zoom-from-top;
-		}
-	}
+.animation-enter-fade-in-down .message.enter {
+	animation-name: var(--smooth), fade-in, move-from-top;
+}
 
-	&.exit {
-		.animation-exit-none & {
-			animation-name: none;
-			display: none;
-		}
+/* slide in */
 
-		/* fade out */
+.animation-enter-slide-in-left .message.enter {
+	animation-name: var(--smooth), move-from-left;
+}
 
-		.animation-exit-fade-out & {
-			animation-name: fade-out;
-		}
+.animation-enter-slide-in-right .message.enter {
+	animation-name: var(--smooth), move-from-right;
+}
 
-		.animation-exit-fade-out-left & {
-			animation-name: fade-out, move-to-left;
-		}
+.animation-enter-slide-in-up .message.enter {
+	animation-name: var(--smooth), move-from-bottom;
+}
 
-		.animation-exit-fade-out-right & {
-			animation-name: fade-out, move-to-right;
-		}
+.animation-enter-slide-in-down .message.enter {
+	animation-name: var(--smooth), move-from-top;
+}
 
-		.animation-exit-fade-out-up & {
-			animation-name: fade-out, move-to-top;
-		}
+/* zoom in */
 
-		.animation-exit-fade-out-down & {
-			animation-name: fade-out, move-to-bottom;
-		}
+.animation-enter-zoom-in .message.enter {
+	animation-name: var(--smooth), zoom-in;
+}
 
-		/* slide out */
+.animation-enter-zoom-in-left .message.enter {
+	animation-name: var(--smooth), zoom-from-left;
+}
 
-		.animation-exit-slide-out-left & {
-			animation-name: move-to-left;
-		}
+.animation-enter-zoom-in-right .message.enter {
+	animation-name: var(--smooth), zoom-from-right;
+}
 
-		.animation-exit-slide-out-right & {
-			animation-name: move-to-right;
-		}
+.animation-enter-zoom-in-up .message.enter {
+	animation-name: var(--smooth), zoom-from-bottom;
+}
 
-		.animation-exit-slide-out-up & {
-			animation-name: move-to-top;
-		}
+.animation-enter-zoom-in-down .message.enter {
+	animation-name: var(--smooth), zoom-from-top;
+}
 
-		.animation-exit-slide-out-down & {
-			animation-name: move-to-bottom;
-		}
+.animation-exit-none .message.exit {
+	animation-name: none;
+	display: none;
+}
 
-		/* zoom out */
+/* fade out */
 
-		.animation-exit-zoom-out & {
-			animation-name: zoom-out;
-		}
+.animation-exit-fade-out .message.exit {
+	animation-name: fade-out;
+}
 
-		.animation-exit-zoom-out-left & {
-			animation-name: zoom-to-left;
-		}
+.animation-exit-fade-out-left .message.exit {
+	animation-name: fade-out, move-to-left;
+}
 
-		.animation-exit-zoom-out-right & {
-			animation-name: zoom-to-right;
-		}
+.animation-exit-fade-out-right .message.exit {
+	animation-name: fade-out, move-to-right;
+}
 
-		.animation-exit-zoom-out-up & {
-			animation-name: zoom-to-top;
-		}
+.animation-exit-fade-out-up .message.exit {
+	animation-name: fade-out, move-to-top;
+}
 
-		.animation-exit-zoom-out-down & {
-			animation-name: zoom-to-bottom;
-		}
-	}
+.animation-exit-fade-out-down .message.exit {
+	animation-name: fade-out, move-to-bottom;
+}
+
+/* slide out */
+
+.animation-exit-slide-out-left .message.exit {
+	animation-name: move-to-left;
+}
+
+.animation-exit-slide-out-right .message.exit {
+	animation-name: move-to-right;
+}
+
+.animation-exit-slide-out-up .message.exit {
+	animation-name: move-to-top;
+}
+
+.animation-exit-slide-out-down .message.exit {
+	animation-name: move-to-bottom;
+}
+
+/* zoom out */
+
+.animation-exit-zoom-out .message.exit {
+	animation-name: zoom-out;
+}
+
+.animation-exit-zoom-out-left .message.exit {
+	animation-name: zoom-to-left;
+}
+
+.animation-exit-zoom-out-right .message.exit {
+	animation-name: zoom-to-right;
+}
+
+.animation-exit-zoom-out-up .message.exit {
+	animation-name: zoom-to-top;
+}
+
+.animation-exit-zoom-out-down .message.exit {
+	animation-name: zoom-to-bottom;
 }
 
 .content-border {
@@ -330,82 +322,82 @@
 	border: var(--border-width) solid var(--border-color);
 	border-top: 0;
 	position: relative;
+}
 
-	.rounded & {
-		border-bottom-left-radius: var(--border-radius);
-		border-bottom-right-radius: var(--border-radius);
-	}
+.rounded .content-border {
+	border-bottom-left-radius: var(--border-radius);
+	border-bottom-right-radius: var(--border-radius);
+}
 
-	.diagonal & {
-		--diagonal-radius: var(--border-radius) / 2;
-		--diagonal-inner: calc(var(--diagonal-radius) + var(--border-width));
-		--diagonal-inner-mask: transparent var(--diagonal-inner), black 0 100%;
-		--diagonal-inner-mask-width: calc(100% - var(--diagonal-inner) * 2);
-		--diagonal-border:
-			var(--border-color) calc(var(--diagonal-inner) - 1px), transparent 0 100%;
+.diagonal .content-border {
+	--diagonal-radius: var(--border-radius) / 2;
+	--diagonal-inner: calc(var(--diagonal-radius) + var(--border-width));
+	--diagonal-inner-mask: transparent var(--diagonal-inner), black 0 100%;
+	--diagonal-inner-mask-width: calc(100% - var(--diagonal-inner) * 2);
+	--diagonal-border:
+		var(--border-color) calc(var(--diagonal-inner) - 1px), transparent 0 100%;
 
-		--mask:
-			linear-gradient(45deg, var(--diagonal-inner-mask)) 0% 0% /
-				var(--diagonal-inner-mask-width) 100% no-repeat,
-			linear-gradient(-45deg, var(--diagonal-inner-mask)) 100% 0% /
-				var(--diagonal-inner-mask-width) 100% no-repeat;
-		-webkit-mask: var(--mask);
-		mask: var(--mask);
+	--mask:
+		linear-gradient(45deg, var(--diagonal-inner-mask)) 0% 0% /
+			var(--diagonal-inner-mask-width) 100% no-repeat,
+		linear-gradient(-45deg, var(--diagonal-inner-mask)) 100% 0% /
+			var(--diagonal-inner-mask-width) 100% no-repeat;
+	-webkit-mask: var(--mask);
+	mask: var(--mask);
+}
 
-		.diagonal &::after {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background:
-				linear-gradient(45deg, var(--diagonal-border)) 0% 0% /
-					var(--diagonal-inner-mask-width) 100% no-repeat,
-				linear-gradient(-45deg, var(--diagonal-border)) 100% 0% /
-					var(--diagonal-inner-mask-width) 100% no-repeat;
-		}
-	}
+.diagonal .content-border::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background:
+		linear-gradient(45deg, var(--diagonal-border)) 0% 0% /
+			var(--diagonal-inner-mask-width) 100% no-repeat,
+		linear-gradient(-45deg, var(--diagonal-border)) 100% 0% /
+			var(--diagonal-inner-mask-width) 100% no-repeat;
 }
 
 .content-box {
 	padding: 0.25em 0.5em;
 	color: var(--message-color);
 	background-color: var(--message-bg-color);
+}
 
-	.diagonal & {
-		--diagonal-inner: calc(var(--border-width) * 2 - 1px);
-		--diagonal-inner-mask: transparent var(--diagonal-inner), black 0 100%;
-		--diagonal-inner-mask-width: calc(100% - var(--diagonal-inner) * 2);
+.diagonal .content-box {
+	--diagonal-inner: calc(var(--border-width) * 2 - 1px);
+	--diagonal-inner-mask: transparent var(--diagonal-inner), black 0 100%;
+	--diagonal-inner-mask-width: calc(100% - var(--diagonal-inner) * 2);
 
-		--mask:
-			linear-gradient(45deg, var(--diagonal-inner-mask)) 0% 0% /
-				var(--diagonal-inner-mask-width) 100% no-repeat,
-			linear-gradient(-45deg, var(--diagonal-inner-mask)) 100% 0% /
-				var(--diagonal-inner-mask-width) 100% no-repeat;
-		-webkit-mask: var(--mask);
-		mask: var(--mask);
-	}
+	--mask:
+		linear-gradient(45deg, var(--diagonal-inner-mask)) 0% 0% /
+			var(--diagonal-inner-mask-width) 100% no-repeat,
+		linear-gradient(-45deg, var(--diagonal-inner-mask)) 100% 0% /
+			var(--diagonal-inner-mask-width) 100% no-repeat;
+	-webkit-mask: var(--mask);
+	mask: var(--mask);
+}
 
-	.rainbow-highlighted [data-type='highlighted'] &,
-	.rainbow-power-up [data-type='power-up'] &,
-	.rainbow-announcement [data-type='announcement'] &,
-	.rainbow-cheer [data-type='cheer'] & {
-		color: black;
-		font-weight: bolder;
-		background: linear-gradient(
-				-45deg,
-				#ffadad,
-				#ffd6a5,
-				#fdffb6,
-				#caffbf,
-				#9bf6ff,
-				#a0c4ff,
-				#bdb2ff,
-				#ffc6ff,
-				#ffadad,
-				#ffd6a5
-			)
-			100% 100% / 900% 900%;
-		animation: move-background 5s infinite linear;
-	}
+.rainbow-highlighted [data-type='highlighted'] .content-box,
+.rainbow-power-up [data-type='power-up'] .content-box,
+.rainbow-announcement [data-type='announcement'] .content-box,
+.rainbow-cheer [data-type='cheer'] .content-box {
+	color: black;
+	font-weight: bolder;
+	background: linear-gradient(
+			-45deg,
+			#ffadad,
+			#ffd6a5,
+			#fdffb6,
+			#caffbf,
+			#9bf6ff,
+			#a0c4ff,
+			#bdb2ff,
+			#ffc6ff,
+			#ffadad,
+			#ffd6a5
+		)
+		100% 100% / 900% 900%;
+	animation: move-background 5s infinite linear;
 }
 
 .content {
@@ -425,19 +417,19 @@
 	color: var(--user-text-color);
 	background-color: var(--border-color);
 	display: flex;
+}
 
-	.rounded & {
-		border-top-left-radius: var(--border-radius);
-		border-top-right-radius: var(--border-radius);
-	}
+.rounded .user-box {
+	border-top-left-radius: var(--border-radius);
+	border-top-right-radius: var(--border-radius);
+}
 
-	.diagonal & {
-		padding-right: 1.5em;
+.diagonal .user-box {
+	padding-right: 1.5em;
 
-		--mask: linear-gradient(-135deg, transparent 1em, black 0 100%);
-		-webkit-mask: var(--mask);
-		mask: var(--mask);
-	}
+	--mask: linear-gradient(-135deg, transparent 1em, black 0 100%);
+	-webkit-mask: var(--mask);
+	mask: var(--mask);
 }
 
 .user {
@@ -446,12 +438,12 @@
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
 
-	&::after {
-		content: '';
-		display: inline-block;
-		width: var(--expander-width);
-	}
+.user::after {
+	content: '';
+	display: inline-block;
+	width: var(--expander-width);
 }
 
 .name {
@@ -461,9 +453,10 @@
 
 .badges {
 	display: var(--badge-display);
-	&:empty {
-		display: none;
-	}
+}
+
+.badges:empty {
+	display: none;
 }
 
 .badge {
@@ -480,9 +473,10 @@
 .pronouns {
 	display: var(--pronoun-display);
 	text-transform: var(--pronoun-transform);
-	&:empty {
-		display: none;
-	}
+}
+
+.pronouns:empty {
+	display: none;
 }
 
 .text,
