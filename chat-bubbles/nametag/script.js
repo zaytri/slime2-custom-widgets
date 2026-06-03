@@ -387,6 +387,29 @@ async function handleChatMessage(data, eventDate, isAnnouncement) {
 		}
 	});
 
+	// wait for all images to load
+	await Promise.allSettled(
+		[...messageTemplateClone.querySelectorAll('img').values()].map(
+			async imageElement => {
+				return new Promise(resolve => {
+					// image already loaded, resolve immediately
+					if (imageElement.complete) {
+						resolve();
+						return;
+					}
+
+					function onLoad() {
+						imageElement.removeEventListener('load', onLoad);
+						resolve();
+					}
+
+					// add onLoad listener to image
+					imageElement.addEventListener('load', onLoad);
+				});
+			},
+		),
+	);
+
 	setTimeout(
 		() => {
 			const widgetBody = document.getElementById('widget');
@@ -452,6 +475,10 @@ async function handleChatMessage(data, eventDate, isAnnouncement) {
 	);
 }
 
+/**
+ * @param {DocumentFragment} messageTemplateClone
+ * @param {string} messageId
+ */
 function displayMessage(messageTemplateClone, messageId) {
 	/** @type {HTMLDivElement} */
 	const widgetBody = document.getElementById('widget');
@@ -462,6 +489,8 @@ function displayMessage(messageTemplateClone, messageId) {
 			return;
 		}
 
+		observer.disconnect();
+
 		const { inlineSize: width, blockSize: height } = entry.borderBoxSize[0];
 		const newMessageElement = entry.target;
 
@@ -469,8 +498,9 @@ function displayMessage(messageTemplateClone, messageId) {
 
 		newMessageElement.classList.add('enter');
 		[
-			['message-width', `${width}px`],
-			['message-height', `${height}px`],
+			// 50 extra pixels just in case
+			['message-width', `${Math.ceil(width) + 50}px`],
+			['message-height', `${Math.ceil(height) + 50}px`],
 			['random-x', Math.random()],
 			['random-y', Math.random()],
 		].forEach(([cssVarName, value]) => {
@@ -515,8 +545,6 @@ function displayMessage(messageTemplateClone, messageId) {
 				}
 			}
 		});
-
-		observer.disconnect();
 	});
 
 	// append clone
