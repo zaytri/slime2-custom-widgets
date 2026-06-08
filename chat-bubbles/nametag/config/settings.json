@@ -195,6 +195,18 @@
 						"type": "toggle-input",
 						"label": "Hide Badges?",
 						"defaultValue": false
+					},
+					"badge-size": {
+						"type": "slider-input",
+						"label": "Badge Size Multiplier",
+						"condition": {
+							"hide-badges": [false]
+						},
+						"defaultValue": 1.25,
+						"min": 1,
+						"max": 4,
+						"step": 0.05,
+						"description": "Multiplier dependent on the text size."
 					}
 				}
 			},
@@ -228,6 +240,52 @@
 								"value": "hidden"
 							}
 						]
+					}
+				}
+			},
+			"emotes-section": {
+				"type": "section",
+				"label": "Emotes",
+				"settings": {
+					"use-static-emotes": {
+						"type": "toggle-input",
+						"label": "Static Emotes",
+						"halfSpan": true,
+						"defaultValue": false,
+						"description": "If enabled, emotes won't be animated."
+					},
+					"use-dynamic-emote-sizing": {
+						"type": "toggle-input",
+						"label": "Dynamic Emote Sizing?",
+						"halfSpan": true,
+						"defaultValue": true,
+						"description": "When enabled, emotes are larger when the message only contains emotes or is using Gigantify an Emote."
+					},
+					"multi-emote-size": {
+						"type": "slider-input",
+						"label": "Multiple Emotes Size Multiplier",
+						"condition": {
+							"use-dynamic-emote-sizing": [true]
+						},
+						"halfSpan": true,
+						"defaultValue": 1.5,
+						"min": 1,
+						"max": 4,
+						"step": 0.05,
+						"description": "When a message only contains multiple emotes."
+					},
+					"single-emote-size": {
+						"type": "slider-input",
+						"label": "Single Emote Size Multiplier",
+						"condition": {
+							"use-dynamic-emote-sizing": [true]
+						},
+						"halfSpan": true,
+						"defaultValue": 2,
+						"min": 1,
+						"max": 4,
+						"step": 0.05,
+						"description": "When a message contains only one emote, or is using Gigantify an Emote."
 					}
 				}
 			}

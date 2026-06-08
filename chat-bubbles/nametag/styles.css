@@ -16,6 +16,9 @@
 	--message-color: var(--custom-message-color, black);
 	--message-bg-color: var(--custom-message-bg-color, white);
 	--edge-offset: var(--custom-edge-offset, 100px);
+	--badge-size: var(--custom-badge-size, 1.25);
+	--multi-emote-size: var(--custom-multi-emote-size, 2);
+	--single-emote-size: var(--custom-single-emote-size, 4);
 
 	font-family: var(--custom-font-name), Nunito, Helvetica, Arial, sans-serif;
 	font-weight: var(--font-weight);
@@ -460,11 +463,13 @@
 }
 
 .badge {
-	--badge-size: calc(1em + 4px);
-	height: var(--badge-size);
-	width: var(--badge-size);
-	min-height: var(--badge-size);
-	min-width: var(--badge-size);
+	--size: calc(1em * var(--badge-size));
+	height: var(--size);
+	width: var(--size);
+	min-height: min(var(--size), 72px);
+	min-width: min(var(--size), 72px);
+	max-height: 72px;
+	max-width: 72px;
 	margin-right: 3px;
 	display: inline;
 	vertical-align: text-top;
@@ -504,6 +509,31 @@
 	vertical-align: middle;
 	margin-top: -0.25em;
 	margin-bottom: -0.2em;
+}
+
+#widget:not(.use-static-emotes) .emote.static {
+	display: none !important;
+}
+
+#widget.use-static-emotes .emote.animated {
+	display: none !important;
+}
+
+.use-dynamic-emote-sizing .emote-multi .emote {
+	height: calc(2em * var(--multi-emote-size));
+}
+
+.use-dynamic-emote-sizing.arrangement_horizontal .emote-multi .emote {
+	vertical-align: top;
+}
+
+.use-dynamic-emote-sizing .emote-single .emote,
+.use-dynamic-emote-sizing .emote-gigantic .emote:nth-last-child(2),
+.use-dynamic-emote-sizing .emote-gigantic .emote:last-child {
+	height: calc(2em * var(--single-emote-size));
+	display: block;
+	margin: 0;
+	margin-top: 0.25em;
 }
 
 /***********************
