@@ -179,6 +179,25 @@ function widgetValuesListener(event) {
 		Widget.values.get('pronouns-display') ?? 'lowercase',
 	);
 
+	// plurality settings
+
+	[
+		['use-plurality', Widget.values.get('plurality-support') ?? true],
+		[
+			'plurality-show-usernames',
+			Widget.values.get('plurality-show-usernames') ?? false,
+		],
+	].forEach(([className, value]) => {
+		toggleClass(className, value);
+	});
+
+	// localized settings
+
+	toggleClass(
+		'localized-show-usernames',
+		Widget.values.get('localized-show-usernames') ?? false,
+	);
+
 	// emote settings
 	[
 		['use-static-emotes', Widget.values.get('use-static-emotes') ?? false],
@@ -316,7 +335,7 @@ function twitchEventListener(event) {
 		case 'channel.chat.notification':
 			if (data.message && data.message.text) {
 				// treat notifications with user input as regular chat messages
-				return handleChatMessage(data, eventDate, true);
+				return handleChatMessage(data, eventDate);
 			}
 			break;
 	}
@@ -325,7 +344,11 @@ function twitchEventListener(event) {
 // Twitch Event Handlers
 // ***************************************************************************
 
-async function handleChatMessage(data, eventDate, isAnnouncement) {
+/**
+ * @param {Object} data
+ * @param {Date} eventDate
+ */
+async function handleChatMessage(data, eventDate) {
 	const {
 		message,
 		chatter_user_name,
@@ -336,6 +359,7 @@ async function handleChatMessage(data, eventDate, isAnnouncement) {
 		badges,
 		message_type,
 		cheer,
+		notice_type,
 	} = data;
 
 	const userFilterType = Widget.values.get('user-filter-type') ?? 'deny';
@@ -391,12 +415,28 @@ async function handleChatMessage(data, eventDate, isAnnouncement) {
 		}
 	}
 
-	// get user's pronouns
-	const pronouns = await getPronouns(
-		'twitch',
-		chatter_user_id,
-		chatter_user_login,
-	);
+	// get the index of the first non-mention fragment for proxied message
+	let proxiedFragmentIndex = 0;
+	if (message.fragments[0]?.type === 'mention') {
+		proxiedFragmentIndex = 1;
+	}
+
+	// if that fragment isn't a text fragment, can't be a proxied message
+	if (message.fragments[proxiedFragmentIndex]?.type !== 'text') {
+		proxiedFragmentIndex = null;
+	}
+
+	// get user's pronouns and system information
+	const [pronouns, proxiedMessage] = await Promise.all([
+		getPronouns('twitch', chatter_user_id, chatter_user_login),
+		getSystemProxiedMessage(
+			'twitch',
+			chatter_user_id,
+			proxiedFragmentIndex !== null
+				? message.fragments[proxiedFragmentIndex].text
+				: undefined,
+		),
+	]);
 
 	const messageTemplateClone = cloneTemplate('message-template');
 	const messageElement = messageTemplateClone.querySelector('.message');
@@ -418,7 +458,7 @@ async function handleChatMessage(data, eventDate, isAnnouncement) {
 		rainbowMessageType = 'highlighted';
 	} else if (message_type === 'power_ups_message_effect') {
 		rainbowMessageType = 'power-up';
-	} else if (isAnnouncement) {
+	} else if (notice_type === 'announcement') {
 		rainbowMessageType = 'announcement';
 	} else if (!!cheer) {
 		rainbowMessageType = 'cheer';
@@ -428,22 +468,66 @@ async function handleChatMessage(data, eventDate, isAnnouncement) {
 		messageElement.dataset.type = rainbowMessageType;
 	}
 
-	// build user half of message
+	// build badges
+	const badgeClones = buildBadges(badges);
+	messageTemplateClone.querySelector('.badges').append(...badgeClones);
+
+	if (proxiedMessage) {
+		// apply proxied message styles
+		messageElement.classList.add('proxied-message');
+
+		if (proxiedMessage.color) {
+			const proxiedTextColor = accessibleTextColor(proxiedMessage.color);
+			messageElement.style.setProperty(
+				'--proxied-dynamic-color',
+				proxiedTextColor,
+			);
+			messageElement.style.setProperty(
+				'--proxied-dynamic-bg-color',
+				proxiedMessage.color,
+			);
+		}
+
+		// build proxied user
+		messageTemplateClone
+			.querySelector('.user')
+			.append(
+				buildUserLabel(
+					proxiedMessage.member.name,
+					chatter_user_login,
+					proxiedMessage.pronouns?.split('/') ?? pronouns,
+					{ proxied: true },
+				),
+			);
+	}
+
+	// build user
 	messageTemplateClone
 		.querySelector('.user')
-		.appendChild(
-			buildUser(chatter_user_name, chatter_user_login, pronouns, badges),
-		);
+		.append(buildUserLabel(chatter_user_name, chatter_user_login, pronouns));
 
-	// build text half of message
+	// build message text
 	const contentElement = messageTemplateClone.querySelector('.content');
-	message.fragments.forEach(fragment => {
-		const node = buildMessageFragment(fragment);
-		if (Array.isArray(node)) {
-			// when a text fragment is split using third party emotes
-			contentElement.append(...node);
+	message.fragments.forEach((fragment, index) => {
+		if (
+			proxiedMessage &&
+			proxiedFragmentIndex === index &&
+			fragment.type === 'text'
+		) {
+			// append proxied text fragment
+			contentElement.append(
+				...buildTextFragments(
+					{ type: 'text', text: proxiedMessage.body },
+					{ className: 'fragment-proxied' },
+				),
+			);
+
+			// append original text fragment
+			contentElement.append(
+				...buildTextFragments(fragment, { className: 'fragment-original' }),
+			);
 		} else {
-			contentElement.append(node);
+			contentElement.append(...buildMessageFragments(fragment));
 		}
 	});
 
@@ -455,13 +539,18 @@ async function handleChatMessage(data, eventDate, isAnnouncement) {
 		let emoteCount = 0;
 		let emoteOnly = true;
 		for (const child of contentElement.children) {
-			if (child.textContent.trim()) {
+			if (
+				// ignore original fragment in proxied message for emote counting
+				!child.classList.contains('fragment-original') &&
+				child.textContent.trim()
+			) {
 				emoteOnly = false;
 				break;
 			}
-			// check both emote and animated to not double count with the static emote
+
 			if (
 				child.classList.contains('emote') &&
+				// check animated to not double count with static
 				child.classList.contains('animated')
 			) {
 				emoteCount++;
@@ -693,28 +782,37 @@ function handleChatClearUserMessages(data, eventDate) {
 // Element Builders
 // ***************************************************************************
 
-function buildUser(displayName, username, pronouns, badges) {
+/**
+ * @param {string} displayName
+ * @param {string} username
+ * @param {string[] | null} pronouns
+ * @param {{ proxied: boolean }} [options]
+ * @returns {DocumentFragment}
+ */
+function buildUserLabel(
+	displayName,
+	username,
+	pronouns,
+	{ proxied = false } = {},
+) {
 	const userClone = cloneTemplate('user-template');
 
-	let name = displayName;
-
-	// https://blog.twitch.tv/en/2016/08/22/localized-display-names-e00ee8d3250a/
-	if (displayName.toLowerCase() !== username.toLowerCase()) {
-		name = `${name} (${username})`; // localized display name
+	if (proxied) {
+		userClone.querySelector('.user-label').classList.add('user-label-proxied');
+	} else if (displayName.toLowerCase() !== username.toLowerCase()) {
+		// https://blog.twitch.tv/en/2016/08/22/localized-display-names-e00ee8d3250a/
+		userClone
+			.querySelector('.user-label')
+			.classList.add('user-label-localized');
 	}
 
-	userClone.querySelector('.name').textContent = name;
-	userClone.querySelector('.name').setAttribute('data-content', name);
+	userClone.querySelector('.display-name').textContent = displayName;
+	userClone.querySelector('.username').textContent = ` (${username})`;
 
-	if (pronouns) {
+	if (pronouns && pronouns.length > 0) {
 		userClone.querySelector('.pronouns').textContent =
 			` (${pronouns.join('/')})`;
 	}
-
-	const badgeClones = buildBadges(badges);
-	badgeClones.forEach(badgeClone =>
-		userClone.querySelector('.badges').append(badgeClone),
-	);
 
 	return userClone;
 }
@@ -737,27 +835,34 @@ function buildBadges(badges) {
 	});
 }
 
-function buildMessageFragment(fragment) {
+/** @returns {DocumentFragment[]} */
+function buildMessageFragments(fragment) {
 	switch (fragment.type) {
 		case 'emote':
-			return buildEmoteFragment(fragment);
+			return [buildEmoteFragment(fragment)];
 		case 'mention':
-			return buildMentionFragment(fragment);
+			return [buildMentionFragment(fragment)];
 		case 'cheermote':
-			return buildCheermoteFragment(fragment);
+			return [buildCheermoteFragment(fragment)];
 		case 'text':
 		default:
-			return buildTextFragment(fragment);
+			return buildTextFragments(fragment);
 	}
 }
 
-function buildTextFragment(textFragment) {
+/**
+ * @param {{ type: 'text'; text: string }} textFragment
+ * @param {{ className?: string }} [options]
+ * @returns {DocumentFragment[]}
+ */
+function buildTextFragments(textFragment, { className = undefined } = {}) {
 	const { text } = textFragment;
 
 	const parsedFragments = [];
 
 	const thirdPartyEmoteNames = Array.from(Twitch.thirdPartyEmotes.keys());
 	text.split(createEmoteRegex(thirdPartyEmoteNames)).forEach(part => {
+		// ignore empty strings that occur due to the split
 		if (part === '') return;
 
 		const thirdPartyEmote = Twitch.thirdPartyEmotes.get(part) ?? {};
@@ -792,19 +897,30 @@ function buildTextFragment(textFragment) {
 	});
 
 	return parsedFragments.map(fragment => {
-		if (fragment.type === 'emote') {
-			return buildParsedEmoteFragment(fragment);
-		} else {
-			return buildParsedTextFragment(fragment);
-		}
+		const fragmentClone =
+			fragment.type === 'emote'
+				? buildParsedEmoteFragment(fragment, { className })
+				: buildParsedTextFragment(fragment, { className });
+		return fragmentClone;
 	});
 }
 
-function buildParsedTextFragment(parsedTextFragment) {
+/**
+ * @param {{ type: 'text'; text: string }} parsedTextFragment
+ * @param {{ className?: string }} [options]
+ * @returns {DocumentFragment}
+ */
+function buildParsedTextFragment(
+	parsedTextFragment,
+	{ className = undefined } = {},
+) {
 	const { text } = parsedTextFragment;
 
 	const textClone = cloneTemplate('text-fragment-template');
 	textClone.querySelector('.text').textContent = text;
+	if (className) {
+		textClone.querySelector('.text').classList.add(className);
+	}
 
 	return textClone;
 }
@@ -845,12 +961,30 @@ function buildEmoteFragment(emoteFragment) {
 	});
 }
 
-function buildParsedEmoteFragment(parsedEmoteFragment) {
+/**
+ * @param {{
+ * 	type: 'emote';
+ * 	text: string;
+ * 	srcAnimated: string;
+ * 	srcStatic: string;
+ * }} parsedEmoteFragment
+ * @param {{ className?: string }} [options]
+ * @returns {DocumentFragment}
+ */
+function buildParsedEmoteFragment(
+	parsedEmoteFragment,
+	{ className = undefined } = {},
+) {
 	const { srcAnimated, srcStatic } = parsedEmoteFragment;
 
 	const emoteClone = cloneTemplate('emote-fragment-template');
 	emoteClone.querySelector('.emote.animated').src = srcAnimated;
 	emoteClone.querySelector('.emote.static').src = srcStatic;
+	if (className) {
+		emoteClone.querySelectorAll('.emote').forEach(emoteElement => {
+			emoteElement.classList.add(className);
+		});
+	}
 
 	return emoteClone;
 }
@@ -881,70 +1015,113 @@ function buildCheermoteFragment(cheermoteFragment) {
 // Requests
 // ***************************************************************************
 
-/** Returns array of pronouns to show, or `null` if they haven't set any */
+/**
+ * Returns array of pronouns to show, or `null` if they haven't set any.
+ *
+ * @param {'twitch'} platform
+ * @param {string} userId
+ * @param {string} username
+ * @returns {Promise<string[] | null>}
+ */
 async function getPronouns(platform, userId, username) {
-	return slime2.request(Widget.readAccount.id, 'get-pronouns', {
+	return slime2.request('get-pronouns', {
 		platform,
 		user_id: userId,
 		username,
 	});
 }
 
-/** Returns ISO string of follow date, or `null` if they aren't following. */
+/**
+ * Returns proxy information for the message, or `null` if this isn't a message
+ * sent by a system member.
+ *
+ * @param {'twitch'} platform
+ * @param {string} userId
+ * @param {string} [message]
+ * @returns {Promise<Object | null>}
+ *   https://docs.pluralmind.chat/api/interfaces/ProxiedMessage.html
+ */
+async function getSystemProxiedMessage(platform, userId, message) {
+	if (!message) return null;
+
+	return slime2.request('get-system-proxied-message', {
+		platform,
+		user_id: userId,
+		message,
+	});
+}
+
+/**
+ * Returns ISO string of follow date, or `null` if they aren't following.
+ *
+ * @param {string} userId
+ * @returns {Promise<string | null>}
+ */
 async function getTwitchFollowDate(userId) {
-	return slime2.request(Widget.readAccount.id, 'get-twitch-follow-date', {
+	return slime2.request('get-twitch-follow-date', {
+		account_id: Widget.readAccount.id,
 		user_id: userId,
 	});
 }
 
 /**
- * Returns array of Twitch Cheermotes
- *
+ * Returns array of Twitch Cheermotes.
  * https://dev.twitch.tv/docs/api/reference/#get-cheermotes
+ *
+ * @returns {Promise<Object[]>}
  */
 async function getTwitchCheermotes() {
-	return slime2.request(Widget.readAccount.id, 'get-twitch-cheermotes');
+	return slime2.request('get-twitch-cheermotes', {
+		account_id: Widget.readAccount.id,
+	});
 }
 
 /**
- * Returns array of Twitch Global Badges
- *
+ * Returns array of Twitch Global Badges.
  * https://dev.twitch.tv/docs/api/reference/#get-global-chat-badges
+ *
+ * @returns {Promise<Object[]>}
  */
 async function getTwitchGlobalBadges() {
-	return slime2.request(Widget.readAccount.id, 'get-twitch-global-badges');
+	return slime2.request('get-twitch-global-badges', {
+		account_id: Widget.readAccount.id,
+	});
 }
 
 /**
- * Returns array of Twitch Channel Chat Badges
- *
+ * Returns array of Twitch Channel Chat Badges.
  * https://dev.twitch.tv/docs/api/reference/#get-channel-chat-badges
+ *
+ * @returns {Promise<Object[]>}
  */
 async function getTwitchChannelChatBadges() {
-	return slime2.request(
-		Widget.readAccount.id,
-		'get-twitch-channel-chat-badges',
-	);
+	return slime2.request('get-twitch-channel-chat-badges', {
+		account_id: Widget.readAccount.id,
+	});
 }
 
 /**
- * Returns BetterTTV Twitch User
- *
+ * Returns BetterTTV Twitch User, or `null` if user hasn't set BTTV emotes.
  * https://betterttv.com/developers/api#user
+ *
+ * @returns {Promise<Object | null>}
  */
 async function getBttvUser() {
-	return slime2.request(Widget.readAccount.id, 'get-betterttv-user', {
+	return slime2.request('get-betterttv-user', {
+		account_id: Widget.readAccount.id,
 		platform: 'twitch',
 	});
 }
 
 /**
- * Returns FrankerFaceZ Twitch Room
- *
+ * Returns FrankerFaceZ Twitch Room, or `null` if user hasn't set FFZ emotes.
  * https://api.frankerfacez.com/docs/#/Rooms
+ *
+ * @returns {Promise<Object | null>}
  */
 async function getFfzRoom() {
-	return slime2.request(Widget.readAccount.id, 'get-frankerfacez-room', {
+	return slime2.request('get-frankerfacez-room', {
+		account_id: Widget.readAccount.id,
 		platform: 'twitch',
 	});
 }

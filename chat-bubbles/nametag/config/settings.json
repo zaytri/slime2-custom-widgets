@@ -162,7 +162,7 @@
 					}
 				}
 			},
-			"colors": {
+			"colors-section": {
 				"type": "section",
 				"label": "Colors",
 				"settings": {
@@ -310,6 +310,42 @@
 								"value": "hidden"
 							}
 						]
+					}
+				}
+			},
+			"plurality-section": {
+				"type": "section",
+				"label": "Plurality",
+				"settings": {
+					"plurality-text": {
+						"type": "text-display",
+						"label": "User system and member information is sourced from https://pluralmind.chat/\nNot sure what plurality is? Consider checking out https://morethanone.info/"
+					},
+					"plurality-support": {
+						"type": "toggle-input",
+						"label": "Plurality Support?",
+						"halfSpan": true,
+						"defaultValue": true,
+						"description": "Uses a member's name, pronouns and color when a proxied message is detected."
+					},
+					"plurality-show-usernames": {
+						"type": "toggle-input",
+						"label": "Keep Original Usernames?",
+						"halfSpan": true,
+						"defaultValue": false,
+						"description": "Shows the user's Twitch username in parentheses after their member name."
+					}
+				}
+			},
+			"localized-section": {
+				"type": "section",
+				"label": "Localized Names",
+				"settings": {
+					"localized-show-usernames": {
+						"type": "toggle-input",
+						"label": "Show original usernames for users with localized display names?",
+						"defaultValue": false,
+						"description": "Shows the user's Twitch username in parenthesis after their localized display name.\nLocalized Display Names: https://blog.twitch.tv/en/2016/08/22/localized-display-names-e00ee8d3250a/"
 					}
 				}
 			},

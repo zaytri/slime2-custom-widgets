@@ -4,7 +4,9 @@
 <template id="message-template">
 	<div class="message">
 		<div class="user-box">
-			<div class="user"></div>
+			<div class="user">
+				<span class="badges"></span>
+			</div>
 		</div>
 		<div class="content-border">
 			<div class="content-box">
@@ -14,30 +16,37 @@
 	</div>
 </template>
 
-<!-- user template, inserted into the user class -->
-<template id="user-template"
-	><span class="badges"></span><span class="name"></span
-	><span class="pronouns"></span
-></template>
+<!-- user label template, inserted into the user class -->
+<template id="user-template">
+	<span class="display-name"></span>
+	<span class="username"></span>
+	<span class="pronouns"></span>
+</template>
 
 <!-- badge template, inserted into the badges class -->
-<template id="badge-template"><img class="badge" /></template>
+<template id="badge-template">
+	<img class="badge" />
+</template>
 
 <!-- text template, inserted into the content class -->
-<template id="text-fragment-template"><span class="text"></span></template>
+<template id="text-fragment-template">
+	<span class="text"></span>
+</template>
 
 <!-- mention template, inserted into the content class -->
-<template id="mention-fragment-template"
-	><span class="mention"></span
-></template>
+<template id="mention-fragment-template">
+	<span class="mention"></span>
+</template>
 
 <!-- emote template, inserted into the content class -->
-<template id="emote-fragment-template"
-	><img class="emote animated" /><img class="emote static"
-/></template>
+<template id="emote-fragment-template">
+	<img class="emote animated" />
+	<img class="emote static" />
+</template>
 
 <!-- cheermote template, inserted into the content class -->
-<template id="cheermote-fragment-template"
-	><img class="cheermote emote animated" /><img
-		class="cheermote emote static" /><span class="cheer-amount"></span
-></template>
+<template id="cheermote-fragment-template">
+	<img class="cheermote emote animated" />
+	<img class="cheermote emote static" />
+	<span class="cheer-amount"></span>
+</template>

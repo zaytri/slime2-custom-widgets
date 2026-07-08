@@ -445,6 +445,14 @@
 	text-overflow: ellipsis;
 }
 
+.username {
+	display: none;
+}
+
+.localized-show-usernames .user-label-localized .username {
+	display: inline;
+}
+
 .customize-user .user {
 	font-family:
 		var(--custom-username-font-name), 'Inter', Nunito, Helvetica, Arial,
@@ -549,6 +557,50 @@
 	display: block;
 	margin: 0;
 	margin-top: 0.25em;
+}
+
+/*************
+ * Plurality *
+ *************/
+
+.user-label-proxied,
+.fragment-proxied {
+	display: none;
+}
+
+.use-plurality .proxied-message :is(.user-label-proxied, .fragment-proxied),
+.use-plurality.plurality-show-usernames
+	.proxied-message
+	.user-label-proxied
+	.username {
+	display: inline;
+}
+
+.use-plurality
+	.proxied-message
+	:is(.user-label:not(.user-label-proxied), .fragment-original) {
+	display: none;
+}
+
+.use-plurality.username-color_twitch .proxied-message .user {
+	color: var(
+		--proxied-username-color,
+		var(--twitch-username-color, var(--font-color))
+	);
+}
+
+.use-plurality.username-color_twitch-light .proxied-message .user {
+	color: var(
+		--proxied-light-username-color,
+		var(--twitch-light-username-color, var(--font-color))
+	);
+}
+
+.use-plurality.username-color_twitch-dark .proxied-message .user {
+	color: var(
+		--proxied-dark-username-color,
+		var(--twitch-dark-username-color, var(--font-color))
+	);
 }
 
 /***********************
