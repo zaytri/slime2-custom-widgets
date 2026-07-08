@@ -77,11 +77,28 @@ function widgetValuesListener(event) {
 		['font-weight', Widget.values.get('font-weight') ?? 'normal'],
 		['max-width', `${Widget.values.get('max-width') ?? 500}px`],
 		['line-clamp', Widget.values.get('max-lines') ?? 4],
+		[
+			'username-font-name',
+			`"${Widget.values.get('custom-username-font-name') ?? 'Inter'}"`,
+		],
+		[
+			'username-font-weight',
+			Widget.values.get('custom-username-font-weight') ?? 'bold',
+		],
+		[
+			'username-font-size',
+			`${Widget.values.get('custom-username-font-size') ?? 14}px`,
+		],
 	].forEach(([cssVarName, value]) => {
 		setCustomCSS(cssVarName, value);
 	});
 
-	toggleClass('full-width', Widget.values.get('full-width') ?? false);
+	[
+		['full-width', Widget.values.get('full-width') ?? false],
+		['customize-user', Widget.values.get('customize-user') ?? false],
+	].forEach(([className, value]) => {
+		toggleClass(className, value);
+	});
 
 	// color settings
 	[
