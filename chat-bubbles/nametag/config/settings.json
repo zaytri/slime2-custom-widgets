@@ -156,7 +156,6 @@
 					"full-width": {
 						"type": "toggle-input",
 						"label": "Full Width Messages?",
-						"halfSpan": true,
 						"defaultValue": false,
 						"description": "Sets message width to always be at max width."
 					}

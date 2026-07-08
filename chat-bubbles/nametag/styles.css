@@ -550,9 +550,11 @@
 	vertical-align: top;
 }
 
-.use-dynamic-emote-sizing .emote-single .emote,
-.use-dynamic-emote-sizing .emote-gigantic .emote:nth-last-child(2),
-.use-dynamic-emote-sizing .emote-gigantic .emote:last-child {
+.use-dynamic-emote-sizing :is(
+		.emote-single .emote,
+		.emote-gigantic .emote:nth-last-child(-n + 2),
+		/* -n + 2 = last 2 children, selecting both animated and static */
+	) {
 	height: calc(2em * var(--single-emote-size));
 	display: block;
 	margin: 0;
@@ -563,8 +565,7 @@
  * Plurality *
  *************/
 
-.user-label-proxied,
-.fragment-proxied {
+#widget:not(.use-plurality) :is(.user-label-proxied, .fragment-proxied) {
 	display: none;
 }
 
