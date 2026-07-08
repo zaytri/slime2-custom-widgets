@@ -95,7 +95,7 @@ function widgetValuesListener(event) {
 
 	[
 		['full-width', Widget.values.get('full-width') ?? false],
-		['customize-user', Widget.values.get('customize-user') ?? false],
+		['customize-user-font', Widget.values.get('customize-user-font') ?? false],
 	].forEach(([className, value]) => {
 		toggleClass(className, value);
 	});
@@ -110,7 +110,10 @@ function widgetValuesListener(event) {
 		setCustomCSS(cssVarName, value);
 	});
 
-	toggleClass('use-custom-user', Widget.values.get('use-custom-user') ?? false);
+	toggleClass(
+		'customize-user-colors',
+		Widget.values.get('use-custom-user') ?? false,
+	);
 
 	const rainbowTypes = Widget.values.get('rainbow-types') ?? [];
 

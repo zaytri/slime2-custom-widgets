@@ -64,7 +64,7 @@
 						"max": 72,
 						"step": 1
 					},
-					"customize-user": {
+					"customize-user-font": {
 						"type": "toggle-input",
 						"label": "Customize Username Font Separately?",
 						"defaultValue": false

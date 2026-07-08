@@ -96,7 +96,7 @@
 	--smooth: smooth-none;
 }
 
-.use-custom-user .message {
+.customize-user-colors .message {
 	--border-color: var(--custom-user-bg-color) !important;
 	--user-text-color: var(--custom-user-color) !important;
 }
@@ -453,7 +453,7 @@
 	display: inline;
 }
 
-.customize-user .user {
+.customize-user-font .user {
 	font-family:
 		var(--custom-username-font-name), 'Inter', Nunito, Helvetica, Arial,
 		sans-serif;
