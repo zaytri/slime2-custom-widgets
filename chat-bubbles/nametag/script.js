@@ -297,8 +297,8 @@ function twitchEventListener(event) {
 		case 'channel.chat.clear_user_messages':
 			return handleChatClearUserMessages(data, eventDate);
 		case 'channel.chat.notification':
-			if (data.notice_type === 'announcement') {
-				// treat announcements as chat messages
+			if (data.message && data.message.text) {
+				// treat notifications with user input as regular chat messages
 				return handleChatMessage(data, eventDate, true);
 			}
 			break;
