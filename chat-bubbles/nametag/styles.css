@@ -97,8 +97,8 @@
 }
 
 .use-custom-user .message {
-	--border-color: var(--custom-user-bg-color);
-	--user-text-color: var(--custom-user-color);
+	--border-color: var(--custom-user-bg-color) !important;
+	--user-text-color: var(--custom-user-color) !important;
 }
 
 .full-width .message {
@@ -582,25 +582,9 @@
 	display: none;
 }
 
-.use-plurality.username-color_twitch .proxied-message .user {
-	color: var(
-		--proxied-username-color,
-		var(--twitch-username-color, var(--font-color))
-	);
-}
-
-.use-plurality.username-color_twitch-light .proxied-message .user {
-	color: var(
-		--proxied-light-username-color,
-		var(--twitch-light-username-color, var(--font-color))
-	);
-}
-
-.use-plurality.username-color_twitch-dark .proxied-message .user {
-	color: var(
-		--proxied-dark-username-color,
-		var(--twitch-dark-username-color, var(--font-color))
-	);
+.use-plurality .proxied-message.message {
+	--border-color: var(--proxied-dynamic-bg-color, var(--dynamic-bg-color));
+	--user-text-color: var(--proxied-dynamic-color, var(--dynamic-color));
 }
 
 /***********************
