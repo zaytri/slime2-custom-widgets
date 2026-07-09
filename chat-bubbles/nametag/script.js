@@ -75,6 +75,7 @@ function widgetValuesListener(event) {
 		['font-name', `"${Widget.values.get('font-name') ?? 'Inter'}"`],
 		['font-size', `${Widget.values.get('font-size') ?? 14}px`],
 		['font-weight', Widget.values.get('font-weight') ?? 'normal'],
+		['text-alignment', Widget.values.get('text-alignment') ?? 'left'],
 		['max-width', `${Widget.values.get('max-width') ?? 500}px`],
 		['line-clamp', Widget.values.get('max-lines') ?? 4],
 		[
@@ -88,6 +89,10 @@ function widgetValuesListener(event) {
 		[
 			'username-font-size',
 			`${Widget.values.get('custom-username-font-size') ?? 14}px`,
+		],
+		[
+			'username-text-alignment',
+			Widget.values.get('custom-username-text-alignment') ?? 'left',
 		],
 	].forEach(([cssVarName, value]) => {
 		setCustomCSS(cssVarName, value);

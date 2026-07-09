@@ -21,10 +21,13 @@
 	--single-emote-size: var(--custom-single-emote-size, 4);
 	--username-font-weight: var(--custom-username-font-weight, bold);
 	--username-font-size: var(--custom-username-font-size, 14px);
+	--text-alignment: var(--custom-text-alignment, left);
+	--username-text-alignment: var(--custom-username-text-alignment, left);
 
 	font-family: var(--custom-font-name), Nunito, Helvetica, Arial, sans-serif;
 	font-weight: var(--font-weight);
 	font-size: var(--font-size);
+	text-align: var(--text-alignment);
 
 	padding-left: 8px;
 	padding-right: 8px;
@@ -421,7 +424,15 @@
 	padding: var(--border-width) calc(var(--border-width) * 2);
 	color: var(--user-text-color);
 	background-color: var(--border-color);
-	display: flex;
+}
+
+.customize-user-font .user-box {
+	font-family:
+		var(--custom-username-font-name), 'Inter', Nunito, Helvetica, Arial,
+		sans-serif;
+	font-size: var(--username-font-size);
+	font-weight: var(--username-font-weight);
+	text-align: var(--username-text-alignment);
 }
 
 .rounded .user-box {
@@ -451,14 +462,6 @@
 
 .localized-show-usernames .user-label-localized .username {
 	display: inline;
-}
-
-.customize-user-font .user {
-	font-family:
-		var(--custom-username-font-name), 'Inter', Nunito, Helvetica, Arial,
-		sans-serif;
-	font-size: var(--username-font-size);
-	font-weight: var(--username-font-weight);
 }
 
 .user::after {
@@ -550,13 +553,17 @@
 	vertical-align: top;
 }
 
+.use-dynamic-emote-sizing .emote-single {
+	text-align: center;
+}
+
 .use-dynamic-emote-sizing :is(
 		.emote-single .emote,
 		.emote-gigantic .emote:nth-last-child(-n + 2),
 		/* -n + 2 = last 2 children, selecting both animated and static */
 	) {
 	height: calc(2em * var(--single-emote-size));
-	display: block;
+	display: inline-block;
 	margin: 0;
 	margin-top: 0.25em;
 }

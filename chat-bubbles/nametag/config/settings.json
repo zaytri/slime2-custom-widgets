@@ -14,7 +14,6 @@
 					"font-weight": {
 						"type": "dropdown-input",
 						"label": "Font Weight",
-						"condition": {},
 						"halfSpan": true,
 						"defaultValue": 400,
 						"options": [
@@ -59,10 +58,31 @@
 					"font-size": {
 						"type": "slider-input",
 						"label": "Font Size (px)",
+						"halfSpan": true,
 						"defaultValue": 14,
 						"min": 1,
 						"max": 72,
 						"step": 1
+					},
+					"text-alignment": {
+						"type": "select-input",
+						"label": "Text Alignment",
+						"halfSpan": true,
+						"defaultValue": "left",
+						"options": [
+							{
+								"label": "Left",
+								"value": "left"
+							},
+							{
+								"label": "Center",
+								"value": "center"
+							},
+							{
+								"label": "Right",
+								"value": "right"
+							}
+						]
 					},
 					"customize-user-font": {
 						"type": "toggle-input",
@@ -73,7 +93,7 @@
 						"type": "font-input",
 						"label": "Username Font",
 						"condition": {
-							"customize-user": [true]
+							"customize-user-font": [true]
 						},
 						"halfSpan": true
 					},
@@ -81,7 +101,7 @@
 						"type": "dropdown-input",
 						"label": "Username Font Weight",
 						"condition": {
-							"customize-user": [true]
+							"customize-user-font": [true]
 						},
 						"halfSpan": true,
 						"defaultValue": 700,
@@ -128,12 +148,36 @@
 						"type": "slider-input",
 						"label": "Username Font Size (px)",
 						"condition": {
-							"customize-user": [true]
+							"customize-user-font": [true]
 						},
+						"halfSpan": true,
 						"defaultValue": 14,
 						"min": 1,
 						"max": 72,
 						"step": 1
+					},
+					"custom-username-text-alignment": {
+						"type": "select-input",
+						"label": "Username Text Alignment",
+						"condition": {
+							"customize-user-font": [true]
+						},
+						"halfSpan": true,
+						"defaultValue": "left",
+						"options": [
+							{
+								"label": "Left",
+								"value": "left"
+							},
+							{
+								"label": "Center",
+								"value": "center"
+							},
+							{
+								"label": "Right",
+								"value": "right"
+							}
+						]
 					},
 					"max-lines": {
 						"type": "slider-input",
